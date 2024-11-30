@@ -5,13 +5,82 @@ function App() {
   const [showRegister, setShowRegister] = useState(false)
   const [showLogin, setShowLogin] = useState(false)
   const navigate = useNavigate()
+  const [phoneError, setPhoneError] = useState('')
+  const [countryCode, setCountryCode] = useState('84')
+  const [emailError, setEmailError] = useState('')
+  const [formData, setFormData] = useState({
+    studentName: '',
+    birthDate: '',
+    class: '',
+    studentId: '',
+    parentName: '',
+    phone: '',
+    email: ''
+  })
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+  }
+
+  const validateForm = () => {
+    const { studentName, birthDate, class: studentClass, studentId, parentName, phone, email } = formData
+    if (!studentName || !birthDate || !studentClass || !studentId || !parentName || !phone || !email) {
+      return false
+    }
+    return !phoneError && !emailError
+  }
 
   const handleRegisterSubmit = (e) => {
     e.preventDefault()
-    // Xử lý logic đăng ký ở đây
-    // Sau khi đăng ký thành công:
-    setShowRegister(false)
-    navigate('/parent-dashboard')
+    console.log('Form Data:', formData)
+    console.log('Validation result:', validateForm())
+    if (validateForm()) {
+      setShowRegister(false)
+      navigate('/parent-dashboard')
+    } else {
+      alert('Vui lòng điền đầy đủ thông tin và đảm bảo không có lỗi.')
+    }
+  }
+
+  const handleCountryCodeChange = (e) => {
+    setCountryCode(e.target.value)
+  }
+
+  const validatePhoneNumber = (phone) => {
+    const vnPhoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/
+    return vnPhoneRegex.test(phone)
+  }
+
+  const handlePhoneChange = (e) => {
+    const phone = e.target.value
+    setFormData({ ...formData, phone: phone })
+
+    if (!phone) {
+      setPhoneError('Vui lòng nhập số điện thoại')
+    } else if (!validatePhoneNumber(phone)) {
+      setPhoneError('Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam (vd: 84xxxxxxxxx hoặc 0xxxxxxxxx)')
+    } else {
+      setPhoneError('')
+    }
+  }
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[com]{3}$/
+    return emailRegex.test(email)
+  }
+
+  const handleEmailChange = (e) => {
+    const email = e.target.value
+    setFormData({ ...formData, email: email })
+
+    if (!email) {
+      setEmailError('Vui lòng nhập email')
+    } else if (!validateEmail(email)) {
+      setEmailError('Email không hợp lệ. Email phải kết thúc bằng .com')
+    } else {
+      setEmailError('')
+    }
   }
 
   return (
@@ -53,22 +122,31 @@ function App() {
                 <h3 className="text-lg font-semibold text-gray-700">Thông tin học sinh</h3>
                 <input 
                   type="text" 
+                  name="studentName"
+                  value={formData.studentName}
+                  onChange={handleInputChange}
                   placeholder="Họ tên học sinh"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input 
-                  type="number" 
-                  placeholder="Năm sinh"
+                  type="date" 
+                  name="birthDate"
+                  placeholder="Ngày sinh"
+                  onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input 
                   type="text" 
+                  name="class"
                   placeholder="Lớp"
+                  onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input 
                   type="text" 
+                  name="studentId"
                   placeholder="Mã số học sinh"
+                  onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -78,19 +156,60 @@ function App() {
                 <h3 className="text-lg font-semibold text-gray-700">Thông tin phụ huynh</h3>
                 <input 
                   type="text" 
+                  name="parentName"
                   placeholder="Họ tên phụ huynh giám hộ"
+                  onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <input 
-                  type="tel" 
-                  placeholder="Số điện thoại"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <input 
-                  type="email" 
-                  placeholder="Email"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <div className="relative">
+                  <div className="flex">
+                    <select 
+                      value={countryCode} 
+                      onChange={handleCountryCodeChange}
+                      className="border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="84">+84 (Vietnam)</option>
+                      <option value="1">+1 (USA)</option>
+                      <option value="44">+44 (UK)</option>
+                      {/* Thêm các mã quốc gia khác nếu cần */}
+                    </select>
+                    <input 
+                      type="tel" 
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handlePhoneChange}
+                      placeholder="Số điện thoại"
+                      className={`w-full px-4 py-2 border ${phoneError ? 'border-red-500' : 'border-gray-300'} rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    />
+                  </div>
+                  {phoneError && (
+                    <p className="text-red-500 text-sm mt-1">{phoneError}</p>
+                  )}
+                  <div className="text-xs text-gray-500 mt-1">
+                    * Định dạng hợp lệ:
+                    <ul className="list-disc list-inside">
+                      <li>Bắt đầu bằng 84 hoặc 0</li>
+                      <li>Tiếp theo là 3,5,7,8,9</li>
+                      <li>Tổng cộng 10 số (nếu bắt đầu bằng 0) hoặc 11 số (nếu bắt đầu bằng 84)</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="relative">
+                  <input 
+                    type="email" 
+                    name="email"
+                    value={formData.email}
+                    onChange={handleEmailChange}
+                    placeholder="Email"
+                    className={`w-full px-4 py-2 border ${emailError ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  />
+                  {emailError && (
+                    <p className="text-red-500 text-sm mt-1">{emailError}</p>
+                  )}
+                  <div className="text-xs text-gray-500 mt-1">
+                    * Email phải có định dạng: example@domain.com
+                  </div>
+                </div>
               </div>
 
               <button 
