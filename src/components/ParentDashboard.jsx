@@ -1,5 +1,25 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js'
+import { Bar } from 'react-chartjs-2'
+
+// Đăng ký các thành phần của Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+)
 
 function ParentDashboard() {
   const [activeTab, setActiveTab] = useState('thongTin')
@@ -46,16 +66,6 @@ function ParentDashboard() {
           </button>
           <button
             className={`px-4 py-2 rounded-lg font-semibold ${
-              activeTab === 'diemSo'
-                ? 'bg-blue-500 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-50'
-            }`}
-            onClick={() => setActiveTab('diemSo')}
-          >
-            Điểm số
-          </button>
-          <button
-            className={`px-4 py-2 rounded-lg font-semibold ${
               activeTab === 'thoiKhoaBieu'
                 ? 'bg-blue-500 text-white'
                 : 'bg-white text-gray-600 hover:bg-gray-50'
@@ -63,6 +73,16 @@ function ParentDashboard() {
             onClick={() => setActiveTab('thoiKhoaBieu')}
           >
             Thời khóa biểu
+          </button>
+          <button
+            className={`px-4 py-2 rounded-lg font-semibold ${
+              activeTab === 'thucDon'
+                ? 'bg-blue-500 text-white'
+                : 'bg-white text-gray-600 hover:bg-gray-50'
+            }`}
+            onClick={() => setActiveTab('thucDon')}
+          >
+            Thực đơn
           </button>
           <button
             className={`px-4 py-2 rounded-lg font-semibold ${
@@ -95,6 +115,10 @@ function ParentDashboard() {
                     <label className="block text-sm font-medium text-gray-600">Lớp</label>
                     <p className="mt-1 text-gray-800">7A1</p>
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600">Cân nặng</label>
+                    <p className="mt-1 text-gray-800">45 kg</p>
+                  </div>
                 </div>
                 <div className="space-y-4">
                   <div>
@@ -111,35 +135,60 @@ function ParentDashboard() {
                   </div>
                 </div>
               </div>
-            </div>
-          )}
 
-          {activeTab === 'diemSo' && (
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-800">Bảng điểm</h2>
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="border p-2 text-left">Môn học</th>
-                    <th className="border p-2 text-center">Điểm miệng</th>
-                    <th className="border p-2 text-center">Điểm 15p</th>
-                    <th className="border p-2 text-center">Điểm 1 tiết</th>
-                    <th className="border p-2 text-center">Điểm cuối kỳ</th>
-                    <th className="border p-2 text-center">Điểm TB</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="border p-2">Toán</td>
-                    <td className="border p-2 text-center">8.5</td>
-                    <td className="border p-2 text-center">9.0</td>
-                    <td className="border p-2 text-center">8.0</td>
-                    <td className="border p-2 text-center">8.5</td>
-                    <td className="border p-2 text-center font-semibold">8.5</td>
-                  </tr>
-                  {/* Thêm các môn học khác tương tự */}
-                </tbody>
-              </table>
+              {/* Bảng điểm */}
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Bảng điểm học tập</h3>
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="border p-2 text-left">Môn học</th>
+                      <th className="border p-2 text-center">Điểm miệng</th>
+                      <th className="border p-2 text-center">Điểm 15p</th>
+                      <th className="border p-2 text-center">Điểm 1 tiết</th>
+                      <th className="border p-2 text-center">Điểm cuối kỳ</th>
+                      <th className="border p-2 text-center">Điểm TB</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="border p-2">Toán</td>
+                      <td className="border p-2 text-center">8.5</td>
+                      <td className="border p-2 text-center">9.0</td>
+                      <td className="border p-2 text-center">8.0</td>
+                      <td className="border p-2 text-center">8.5</td>
+                      <td className="border p-2 text-center font-semibold">8.5</td>
+                    </tr>
+                    {/* Có thể thêm các môn học khác ở đây */}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Biểu đồ dinh dưỡng */}
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Biểu đồ dinh dưỡng cần bổ sung</h3>
+                <Bar
+                  data={{
+                    labels: ['Protein', 'Carbs', 'Fat', 'Vitamins', 'Minerals'],
+                    datasets: [
+                      {
+                        label: 'Cần bổ sung (g)',
+                        data: [20, 50, 10, 5, 8], // Dữ liệu mẫu
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                      },
+                    ],
+                  }}
+                  options={{
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                      },
+                    },
+                  }}
+                />
+              </div>
             </div>
           )}
 
@@ -167,6 +216,90 @@ function ParentDashboard() {
                     <td className="border p-2">Hóa</td>
                   </tr>
                   {/* Thêm các tiết học khác tương tự */}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {activeTab === 'thucDon' && (
+            <div className="space-y-6">
+              <h2 className="text-xl font-semibold text-gray-800">Thực đơn tuần</h2>
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="border p-2">Thời gian</th>
+                    <th className="border p-2">Thứ 2</th>
+                    <th className="border p-2">Thứ 3</th>
+                    <th className="border p-2">Thứ 4</th>
+                    <th className="border p-2">Thứ 5</th>
+                    <th className="border p-2">Thứ 6</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="border p-2 font-semibold">Bữa sáng</td>
+                    <td className="border p-2">
+                      <div>Phở gà</div>
+                      <div className="text-sm text-gray-500">Rau: xà lách, giá đỗ</div>
+                    </td>
+                    <td className="border p-2">
+                      <div>Bún bò</div>
+                      <div className="text-sm text-gray-500">Rau: rau muống, giá đỗ</div>
+                    </td>
+                    <td className="border p-2">
+                      <div>Bánh mì trứng</div>
+                      <div className="text-sm text-gray-500">Rau: dưa leo, cà chua</div>
+                    </td>
+                    <td className="border p-2">
+                      <div>Mì xào hải sản</div>
+                      <div className="text-sm text-gray-500">Rau: cải thìa, cà rốt</div>
+                    </td>
+                    <td className="border p-2">
+                      <div>Cháo gà</div>
+                      <div className="text-sm text-gray-500">Rau: hành lá, rau mùi</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border p-2 font-semibold">Bữa trưa</td>
+                    <td className="border p-2">
+                      <div>Cơm</div>
+                      <div>Thịt kho tàu</div>
+                      <div>Canh cải</div>
+                      <div className="text-sm text-gray-500">Tráng miệng: chuối</div>
+                    </td>
+                    <td className="border p-2">
+                      <div>Cơm</div>
+                      <div>Cá kho tộ</div>
+                      <div>Canh bí đỏ</div>
+                      <div className="text-sm text-gray-500">Tráng miệng: cam</div>
+                    </td>
+                    <td className="border p-2">
+                      <div>Cơm</div>
+                      <div>Gà rán</div>
+                      <div>Canh rau dền</div>
+                      <div className="text-sm text-gray-500">Tráng miệng: ổi</div>
+                    </td>
+                    <td className="border p-2">
+                      <div>Cơm</div>
+                      <div>Sườn xào chua ngọt</div>
+                      <div>Canh chua</div>
+                      <div className="text-sm text-gray-500">Tráng miệng: dưa hấu</div>
+                    </td>
+                    <td className="border p-2">
+                      <div>Cơm</div>
+                      <div>Đậu sốt cà chua</div>
+                      <div>Canh rau muống</div>
+                      <div className="text-sm text-gray-500">Tráng miệng: táo</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border p-2 font-semibold">Bữa xế</td>
+                    <td className="border p-2">Sữa chua + bánh quy</td>
+                    <td className="border p-2">Sinh tố bơ</td>
+                    <td className="border p-2">Sữa tươi + bánh mì</td>
+                    <td className="border p-2">Yaourt + hoa quả</td>
+                    <td className="border p-2">Nước ép cam</td>
+                  </tr>
                 </tbody>
               </table>
             </div>

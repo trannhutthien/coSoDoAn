@@ -15,7 +15,8 @@ function App() {
     studentId: '',
     parentName: '',
     phone: '',
-    email: ''
+    email: '',
+    password: ''
   })
 
   const handleInputChange = (e) => {
@@ -112,7 +113,7 @@ function App() {
       {/* Form đăng ký với overlay */}
       {showRegister && (
         <div className="fixed inset-0 bg-overlay flex items-center justify-center">
-          <div className="bg-white rounded-lg p-8 w-full max-w-md relative animate-fade-in">
+          <div className="bg-white rounded-lg p-8 w-full max-w-md relative animate-fade-in max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
               Đăng ký thông tin học sinh
             </h2>
@@ -158,6 +159,13 @@ function App() {
                   type="text" 
                   name="parentName"
                   placeholder="Họ tên phụ huynh giám hộ"
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input 
+                  type="password" 
+                  name="password"
+                  placeholder="Mật khẩu"
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -220,7 +228,7 @@ function App() {
               </button>
             </form>
             <button 
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 z-50"
               onClick={() => setShowRegister(false)}
             >
               ✕
